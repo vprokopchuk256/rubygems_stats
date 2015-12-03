@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'active_support/all'
+require 'json'
+
+class Grouper
+  attr_reader :group_name, :lines
+
+  def initialize group_name, lines
+    @group_name = group_name
+    @lines = lines || []
+  end
+
+  def run
+    groups.each do |_, l|
+      yield [group_date(l), substract(group_first_stat(l), from: group_last_stat(l))].to_json
+    end
+  end
+
+  private
+
+  def substract(group, from:)
+    group.merge(from){|key, f, l| l.to_i - f.to_i }
+  end
+
+  def group_first_stat group
+    group.first.last
+  end
+
+  def group_last_stat group
+    group.last.last
+  end
+
+  def group_date group
+    group.first.first
+  end
+
+  def groups
+    parsed_lines.group_by{|l| l.first.to_datetime.strftime(group_name)}
+  end
+
+  def parsed_lines
+    lines.collect{ |l| JSON.parse(l) }
+  end
+end
+
+group = ''
+
+OptionParser.new do |opts|
+  opts.banner = 'Process data before output. Usage: ./process [options]'
+
+  opts.on("-b", "--by [name|format]", "group name or time format") do |g|
+    group = g
+  end
+end.parse!
+
+Grouper.new(group, STDIN.tty? ? [] : ARGF.readlines).run{ |l| puts l }
+
