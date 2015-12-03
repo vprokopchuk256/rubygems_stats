@@ -13,11 +13,12 @@ class Db
     @table = table
   end
 
-  def select from:, to:, last:
+  def select from:, to:, sort:
     scope = info
 
     scope = scope.where('created_at >= ?', DateParser.parse(from)) if from
     scope = scope.where('created_at <= ?', DateParser.parse(to)) if to
+    scope = sort.to_sym == :desc ? scope.reverse_order(:created_at) : scope.order(:created_at)
 
     res  = scope.each_with_object(Hash.new{|h, k| h[k] = {}}) do |item, res|
       res[item[:created_at]][item[:name]] = item[:downloads]
