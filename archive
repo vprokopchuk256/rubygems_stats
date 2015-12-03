@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+#
+require 'optparse'
+require 'date'
+
+require_relative 'lib/db'
+require_relative 'lib/archive_updater'
+
+db_options = {
+    host: 'localhost',
+    user: 'root',
+    password: nil,
+    database: 'rg_stat',
+    table: 'info'
+}
+
+selector_options = {
+  from: DateTime.new(1980, 1, 1),
+  to: DateTime.now
+}
+
+OptionParser.new do |opts|
+  opts.banner = 'Gets data from archive. Usage: ./archive [options]'
+
+  opts.on("-h", "--host [localhost]", "mysql host") do |h|
+    db_options[:host] = h
+  end
+
+  opts.on("-u", "--user [root]", "mysql username") do |u|
+    db_options[:user] = u
+  end
+
+  opts.on("-p", "--password [<none>]", "password") do |p|
+    db_options[:password] = p
+  end
+
+  opts.on("-d", "--database [rg_stat]", "database name") do |d|
+    db_options[:database] = d
+  end
+
+  opts.on("-t", "--table [info]", "table name") do |t|
+    db_options[:table] = t
+  end
+
+  opts.on("-f", "--from [1/1/1980]", "From date") do |f|
+    selector_options[:from] = f
+  end
+
+  opts.on("--to [now]", "To date") do |t|
+    selector_options[:to] = 1
+  end
+
+  opts.on("-l", "--last [1]", "Tail size") do |t|
+    selector_options[:last] = t || 1
+  end
+end.parse!
+
+db = Db.new(db_options)
+
+unless STDIN.tty?
+  archive_updater = ArchiveUpdater.new(db)
+
+  until STDIN.eof?
+    archive_updater.add(ARGF.readline)
+  end
+end
+
+# archive_selector = archive_selector_factory.create_selector
+# archive_selector.data.each{ |l| puts l.to_json }
+
