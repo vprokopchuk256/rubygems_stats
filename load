@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+#
+require 'optparse'
+
+require_relative 'lib/gems_selector_factory'
+
+gems_selector_factory = GemsSelectorFactory.new
+
+OptionParser.new do |opts|
+  opts.banner = 'Loads rubygems statistics. Usage: ./load [options]'
+
+  gems_selector_factory.parse_options(opts)
+end.parse!
+
+gems_selector = gems_selector_factory.create
+
+puts [DateTime.now, gems_selector.data].to_json
