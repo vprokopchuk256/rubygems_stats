@@ -12,7 +12,8 @@ db_options = {
     user: 'root',
     password: nil,
     database: 'rg_stat',
-    table: 'info'
+    table: 'info',
+    type: :all
 }
 
 selector_options = {
@@ -43,6 +44,10 @@ OptionParser.new do |opts|
 
   opts.on("-t", "--table [#{db_options[:table]}]", "table name") do |t|
     db_options[:table] = t
+  end
+
+  opts.on("-i", "--incremental", "incremental") do |i|
+    db_options[:type] = i ? :inc : :all
   end
 
   opts.on("-f", "--from [#{selector_options[:from].to_formatted_s(:short)}]", "from date") do |f|

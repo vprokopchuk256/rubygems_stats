@@ -1,0 +1,78 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'json'
+
+
+require_relative 'lib/formatter'
+require_relative 'lib/format'
+
+table_options = {
+  title_align: :ljust,
+  title_color: 'blue',
+  timestamp_format: '%c',
+  timestamp_color: 'green',
+  line_caption_format: '%a, %-d %b %y',
+  line_caption_color: 'blue',
+  line_caption_align: 'right',
+  line_caption_size: 20,
+  line_value_align: 'right',
+  line_value_size: 7,
+  line_value_positive_color: 'green',
+  line_total: true,
+  line_total_value_align: 'right',
+  line_total_value_size: 7,
+  line_total_value_positive_color: 'green',
+  line_total_label_color: 'blue',
+
+  total: true,
+  total_caption_format: '%a, %-d %b %y',
+  total_caption_color: 'blue',
+  total_caption_align: 'right',
+  total_caption_size: 20,
+  total_value_align: 'right',
+  total_value_size: 7,
+  total_value_positive_color: 'green',
+  total_label_color: 'blue',
+
+  total_total: true,
+  total_total_value_align: 'right',
+  total_total_value_size: 7,
+  total_total_value_positive_color: 'green',
+  total_total_label_color: 'blue',
+}
+
+OptionParser.new do |args|
+  args.banner = 'Formats data. Usage: ./format [options]'
+
+  Format.for(:title).configure_value(args, table_options)
+  Format.for(:title).configure_attrs(args, table_options, :color, :align, :size)
+  Format.for(:timestamp).configure_attrs(args, table_options, :color, :align, :size, :format)
+  Format.for(:line).configure_attrs(args, table_options,
+    :caption_color, :caption_align, :caption_size, :caption_format,
+    :label_color, :label_align, :label_size,
+    :value_color, :value_positive_color, :value_negative_color, :value_align, :value_size,
+    :total_label_color, :total_label_align, :total_label_size,
+    :total_value_color, :total_value_positive_color, :total_value_negative_color, :total_value_align, :total_value_size,
+  )
+  Format.for(:total).configure_attrs(args, table_options,
+    :caption_color, :caption_align, :caption_size, :caption_format,
+    :label_color, :label_align, :label_size,
+    :value_color, :value_positive_color, :value_negative_color, :value_align, :value_size,
+    :total_label_color, :total_label_align, :total_label_size,
+    :total_value_color, :total_value_positive_color, :total_value_negative_color, :total_value_align, :total_value_size,
+  )
+  args.on("--[no-]line-total", "show/hide line total") do |v|
+    table_options[:line_total] = v
+  end
+
+  args.on("--[no-]total", "show/hide line total") do |v|
+    table_options[:total] = v
+  end
+end.parse!
+
+
+lines = ARGF.readlines.collect{|l| JSON.parse(l)}
+
+Formatter.new(lines, table_options).out{ |l| puts l } unless STDIN.tty?
+

@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+OptionParser.new do |opts|
+  opts.banner = 'Formats data. Usage: ./format [options]'
+
+  opts.on("-t", "--by [name|format]", "group name or time format") do |g|
+    group = g
+  end
+end.parse!
