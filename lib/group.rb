@@ -1,8 +1,9 @@
 class Group
-  attr_reader :lines
+  attr_reader :lines, :func
 
-  def initialize lines
+  def initialize lines, func: :sum
     @lines = lines
+    @func = func
   end
 
   def to_json
@@ -11,13 +12,19 @@ class Group
 
   private
 
-  def date
-    lines.first.first
+  def stat
+    @stat ||= grouped_by_name.transform_values!{|v| Array(v).public_send(func)}
   end
 
-  def stat
-    lines.collect(&:last).each_with_object(Hash.new{|h, k| h[k] = 0}) do |s, gs|
-      gs.merge!(s) { |_, d1, d2| d1 + d2 }
+  def grouped_by_name
+    lines.collect(&:last).each_with_object({}) do |s, gs|
+      gs.merge!(s) { |k, downloads_array, downloads|
+        Array(downloads_array) << downloads
+      }
     end
+  end
+
+  def date
+    lines.first.first
   end
 end

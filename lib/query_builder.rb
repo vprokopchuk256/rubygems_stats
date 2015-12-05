@@ -8,11 +8,12 @@ class QueryBuilder
     @type = type
   end
 
-  def query from:, to:, sort:
+  def query from:, to:, sort:, zero:
     query = %{
       SELECT *
         FROM (#{base_query(from, to)}) info
        WHERE created_at BETWEEN '#{DateParser.parse(from)}' AND '#{DateParser.parse(to)}'
+         AND (downloads = #{zero ? 0 : 1} OR downloads > 0)
        ORDER BY created_at #{sort.to_sym == :desc ? 'DESC' : 'ASC'}
     }
   end

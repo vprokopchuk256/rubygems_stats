@@ -20,7 +20,8 @@ selector_options = {
   from: DateTime.new(1980, 1, 1),
   to: DateTime.now,
   last: nil,
-  sort: 'asc'
+  sort: 'asc',
+  zero: true
 }
 
 OptionParser.new do |opts|
@@ -64,6 +65,10 @@ OptionParser.new do |opts|
 
   opts.on("-s", "--sort [#{selector_options[:sort]}]", "sort direction") do |s|
     selector_options[:sort] = s
+  end
+
+  opts.on("-z", "--[no-]zero", "show zeroes") do |z|
+    selector_options[:zero] = z
   end
 end.parse!
 

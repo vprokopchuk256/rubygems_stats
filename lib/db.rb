@@ -15,9 +15,9 @@ class Db
     @query_builder = QueryBuilder.new(table, type)
   end
 
-  def select from:, to:, sort:
+  def select from:, to:, sort:, zero:
     with_info_table do
-      scope = db[query_builder.query from: from, to: to, sort: sort]
+      scope = db[query_builder.query from: from, to: to, sort: sort, zero: zero]
 
       res  = scope.each_with_object(Hash.new{|h, k| h[k] = {}}) do |item, res|
         res[item[:created_at]][item[:name]] = item[:downloads]

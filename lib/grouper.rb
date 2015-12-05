@@ -1,11 +1,12 @@
 require_relative 'group'
 
 class Grouper
-  attr_reader :group_name, :lines
+  attr_reader :group_name, :lines, :func
 
-  def initialize group_name, lines
+  def initialize group_name, lines, func: :sum
     @group_name = group_name
     @lines = lines || []
+    @func = func
   end
 
   def run
@@ -17,8 +18,8 @@ class Grouper
   private
 
   def groups
-    parsed_lines.group_by{|l| l.first.to_datetime.strftime(group_format)}.collect do |_, lines|
-      Group.new(lines)
+    @groups ||= parsed_lines.group_by{|l| l.first.to_datetime.strftime(group_format)}.collect do |_, lines|
+      Group.new(lines, func: func)
     end
   end
 
