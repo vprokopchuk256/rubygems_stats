@@ -19,7 +19,7 @@ class Format < OpenStruct
 
   def load_from opts
     opts.select{|k,_| k.to_s.match(name.to_s) }.each do |full_name, value|
-      attr_name = full_name.to_s.gsub(/^#{name}\_/, "")
+      attr_name = full_name == name ? 'label' : full_name.to_s.gsub(/^#{name}\_/, "")
 
       self.send("#{attr_name}=", value)
     end

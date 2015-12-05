@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'active_support/all'
 require 'json'
 
 require_relative 'lib/grouper'

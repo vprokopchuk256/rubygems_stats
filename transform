@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'active_support/all'
+require 'json'
+
+normalize = false
+
+OptionParser.new do |opts|
+  opts.banner = 'Transform data. Usage: ./transform [options]'
+
+  opts.on("-n", "--[no-]normalize", "perform data normalization") do |n|
+    normalize = n
+  end
+end.parse!
+
+class Normalizer
+  attr_reader :lines
+
+  def initialize lines
+    @lines = lines
+  end
+
+  def execute
+    stats.each{|s| s.reverse_merge!(base)}
+  end
+
+  private
+
+  def stats
+    @stats ||= lines.collect(&:last)
+  end
+
+  def names
+    @names ||= stats.collect(&:keys).flatten.uniq
+  end
+
+  def base
+    @base ||= names.collect{|n| [n, 0]}.to_h
+  end
+end
+
+unless STDIN.tty?
+  lines = ARGF.readlines.collect{ |l| JSON.parse(l) }
+
+  Normalizer.new(lines).execute if normalize
+
+  lines.each {|l| puts l.to_json }
+end

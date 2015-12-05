@@ -1,4 +1,5 @@
 require_relative 'formatted_value'
+require_relative 'formatted_label'
 
 class FormattedLabeledValue
   attr_reader :value, :label, :format, :type
@@ -11,7 +12,7 @@ class FormattedLabeledValue
   end
 
   def to_s
-    [formatted_label, formatted_value].join(':')
+    [formatted_label, formatted_value].join(formatted_separator.to_s)
   end
 
   private
@@ -22,5 +23,9 @@ class FormattedLabeledValue
 
   def formatted_label
     @formatted_label ||= FormattedValue.new(label, format.for(:label))
+  end
+
+  def formatted_separator
+    @formatted_separator ||= FormattedLabel.new(format.for(:value_separator))
   end
 end

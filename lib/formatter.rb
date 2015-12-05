@@ -1,6 +1,7 @@
 require_relative 'out'
 require_relative 'format'
 require_relative 'formatted_value'
+require_relative 'formatted_label'
 require_relative 'formatted_datetime'
 require_relative 'formatted_line'
 
@@ -24,7 +25,7 @@ class Formatter
   private
 
   def formatted_title
-    FormattedValue.new(opts[:title], format(:title))
+    FormattedLabel.new(format(:title))
   end
 
   def formatted_timestamp

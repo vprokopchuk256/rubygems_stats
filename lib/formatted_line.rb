@@ -1,4 +1,5 @@
 require_relative 'formatted_value'
+require_relative 'formatted_label'
 require_relative 'formatted_integer'
 require_relative 'formatted_labeled_value'
 
@@ -12,7 +13,7 @@ class FormattedLine
   end
 
   def to_s
-    "#{formatted_caption} ===> #{formatted_stats}"
+    "#{formatted_caption}#{formatted_caption_separator}#{formatted_stats}"
   end
 
   private
@@ -34,7 +35,7 @@ class FormattedLine
       .sort_by(&:first)
       .collect{ |label, value| formatted_stat(label, value) }
       .tap{ |r| r << formatted_total if format.total }
-      .join('|')
+      .join(formatted_content_separator.to_s)
   end
 
   def formatted_total
@@ -47,5 +48,13 @@ class FormattedLine
 
   def formatted_caption
     type.new(caption, format.for(:caption))
+  end
+
+  def formatted_caption_separator
+    FormattedLabel.new(format.for(:caption_separator))
+  end
+
+  def formatted_content_separator
+    FormattedLabel.new(format.for(:content_separator))
   end
 end
