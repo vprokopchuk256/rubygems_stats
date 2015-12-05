@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'active_support/all'
 require 'json'
+
+require_relative 'lib/normalizer'
 
 normalize = false
 
@@ -13,32 +14,6 @@ OptionParser.new do |opts|
     normalize = n
   end
 end.parse!
-
-class Normalizer
-  attr_reader :lines
-
-  def initialize lines
-    @lines = lines
-  end
-
-  def execute
-    stats.each{|s| s.reverse_merge!(base)}
-  end
-
-  private
-
-  def stats
-    @stats ||= lines.collect(&:last)
-  end
-
-  def names
-    @names ||= stats.collect(&:keys).flatten.uniq
-  end
-
-  def base
-    @base ||= names.collect{|n| [n, 0]}.to_h
-  end
-end
 
 unless STDIN.tty?
   lines = ARGF.readlines.collect{ |l| JSON.parse(l) }
