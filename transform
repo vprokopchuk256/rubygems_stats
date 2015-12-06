@@ -5,9 +5,11 @@ require 'json'
 
 require_relative 'lib/normalizer'
 require_relative 'lib/incrementor'
+require_relative 'lib/empty_lines_cleaner'
 
 normalize = false
 increment = false
+zeroes = true
 
 OptionParser.new do |opts|
   opts.banner = 'Transform data. Usage: ./transform [options]'
@@ -19,6 +21,10 @@ OptionParser.new do |opts|
   opts.on("-i", "--[no-]increment []", "increment") do |i|
     increment = i || :simple
   end
+
+  opts.on("-z", "--[no-]zero", "remove empty (zero) lines") do |z|
+    zeroes = z
+  end
 end.parse!
 
 unless STDIN.tty?
@@ -26,6 +32,7 @@ unless STDIN.tty?
 
   Normalizer.new(lines).execute if normalize
   Incrementor.new(lines, type: increment).execute if increment
+  EmptyLinesCleaner.new(lines).execute unless zeroes
 
   lines.each {|l| puts l.to_json }
 end
