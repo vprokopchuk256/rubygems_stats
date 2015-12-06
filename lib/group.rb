@@ -1,3 +1,5 @@
+require_relative 'array_aggregations'
+
 class Group
   attr_reader :lines, :func
 
