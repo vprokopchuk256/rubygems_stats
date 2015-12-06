@@ -4,8 +4,10 @@ require 'optparse'
 require 'json'
 
 require_relative 'lib/normalizer'
+require_relative 'lib/incrementor'
 
 normalize = false
+increment = false
 
 OptionParser.new do |opts|
   opts.banner = 'Transform data. Usage: ./transform [options]'
@@ -13,12 +15,17 @@ OptionParser.new do |opts|
   opts.on("-n", "--[no-]normalize", "perform data normalization") do |n|
     normalize = n
   end
+
+  opts.on("-i", "--[no-]increment []", "increment") do |i|
+    increment = i || :simple
+  end
 end.parse!
 
 unless STDIN.tty?
   lines = ARGF.readlines.collect{ |l| JSON.parse(l) }
 
   Normalizer.new(lines).execute if normalize
+  Incrementor.new(lines, type: increment).execute if increment
 
   lines.each {|l| puts l.to_json }
 end

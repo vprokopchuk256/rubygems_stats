@@ -1,6 +1,6 @@
 require_relative 'formatted_value'
 require_relative 'formatted_label'
-require_relative 'formatted_integer'
+require_relative 'formatted_numeric'
 require_relative 'formatted_labeled_value'
 
 class FormattedLine
@@ -39,11 +39,11 @@ class FormattedLine
   end
 
   def formatted_total
-    FormattedLabeledValue.new(total, 'total', format.for(:total), type: FormattedInteger)
+    FormattedLabeledValue.new(total, 'total', format.for(:total), type: FormattedNumeric)
   end
 
   def formatted_stat label, value
-    FormattedLabeledValue.new(value, label, format, type: FormattedInteger)
+    FormattedLabeledValue.new(value, label, format, type: FormattedNumeric)
   end
 
   def formatted_caption

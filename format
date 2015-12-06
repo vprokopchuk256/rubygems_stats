@@ -23,11 +23,15 @@ table_options = {
   line_value_align: 'right',
   line_value_size: 7,
   line_value_positive_color: 'green',
+  line_value_format: :rounded,
+  line_value_precision: 0,
   line_total: true,
   line_total_value_align: 'right',
   line_total_value_size: 7,
   line_total_value_positive_color: 'green',
   line_total_label_color: 'blue',
+  line_total_value_format: :rounded,
+  line_total_value_precision: 0,
 
   total: true,
   total_caption_separator: ' ===> ',
@@ -41,12 +45,16 @@ table_options = {
   total_value_align: 'right',
   total_value_size: 7,
   total_value_positive_color: 'green',
+  total_value_format: :rounded,
+  total_value_precision: 0,
   total_label_color: 'blue',
 
   total_total: true,
   total_total_value_align: 'right',
   total_total_value_size: 7,
   total_total_value_positive_color: 'green',
+  total_total_value_format: :rounded,
+  total_total_value_precision: 0,
   total_total_label_color: 'blue',
 }
 
@@ -60,22 +68,25 @@ OptionParser.new do |args|
     :caption_color, :caption_align, :caption_size, :caption_format,
     :caption_separator, :caption_separator_color, :caption_separator_size, :caption_separator_align,
     :content_separator, :content_separator_color, :content_separator_size, :content_separator_align,
-    :value_separator, :value_separator_color, :value_separator_size, :value_separator_align,
+    :value_separator, :value_separator_color, :value_separator_size, :value_separator_align, :value_format, :value_precision,
     :label_color, :label_align, :label_size,
     :value_color, :value_positive_color, :value_negative_color, :value_align, :value_size,
     :total_label_color, :total_label_align, :total_label_size,
     :total_value_color, :total_value_positive_color, :total_value_negative_color, :total_value_align, :total_value_size,
     :total_value_separator, :total_value_separator_color, :total_value_separator_size, :total_value_separator_align,
+    :total_value_format, :total_value_precision
   )
   Format.for(:total).configure_attrs(args, table_options,
     :caption_color, :caption_align, :caption_size, :caption_format,
     :caption_separator, :caption_separator_color, :caption_separator_size, :caption_separator_align,
     :content_separator, :content_separator_color, :content_separator_size, :content_separator_align,
     :value_separator, :value_separator_color, :value_separator_size, :value_separator_align,
+    :value_format, :value_precision,
     :label_color, :label_align, :label_size,
     :value_color, :value_positive_color, :value_negative_color, :value_align, :value_size,
     :total_label_color, :total_label_align, :total_label_size,
     :total_value_color, :total_value_positive_color, :total_value_negative_color, :total_value_align, :total_value_size,
+    :total_value_format, :total_value_precision,
   )
   args.on("--[no-]line-total", "show/hide line total") do |v|
     table_options[:line_total] = v
